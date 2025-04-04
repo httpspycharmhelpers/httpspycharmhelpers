@@ -1,0 +1,80 @@
+import random
+
+# 定义迷宫大小（10x10的大迷宫）
+maze_size = 10
+
+# 创建迷宫（1代表墙，0代表路，2代表起点）
+maze = [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 1, 0, 0, 0, 1],
+    [1, 0, 1, 1, 0, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+    [1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
+    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+    [1, 1, 1, 1, 1, 0, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 2, 0, 0, 1],  # 起点在(7,6)
+    [1, 0, 1, 1, 1, 1, 1, 0, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+]
+
+# 玩家位置
+player_x = 7
+player_y = 6
+
+# 随机设置终点
+def set_random_end():
+    while True:
+        end_x = random.randint(0, maze_size - 1)
+        end_y = random.randint(0, maze_size - 1)
+        if maze[end_y][end_x] == 0:  # 确保终点是空格
+            maze[end_y][end_x] = 3  # 设置终点
+            return end_x, end_y
+
+# 获取随机终点坐标
+end_x, end_y = set_random_end()
+
+# 显示迷宫
+def display_maze():
+    for y, row in enumerate(maze):
+        for x, cell in enumerate(row):
+            if cell == 1:
+                print("█", end=" ")  # 优化的墙壁显示
+            elif cell == 2:
+                print("S", end=" ")  # 起点
+            elif cell == 3:
+                print("E", end=" ")  # 终点
+            elif (x, y) == (player_x, player_y):
+                print("P", end=" ")  # 玩家位置
+            else:
+                print(" ", end=" ")  # 路
+        print()
+
+# 移动玩家
+def move_player(direction):
+    global player_x, player_y
+    if direction == "↑" and player_y > 0 and maze[player_y - 1][player_x] != 1:
+        player_y -= 1
+    elif direction == "↓" and player_y < maze_size - 1 and maze[player_y + 1][player_x] != 1:
+        player_y += 1
+    elif direction == "←" and player_x > 0 and maze[player_y][player_x - 1] != 1:
+        player_x -= 1
+    elif direction == "→" and player_x < maze_size - 1 and maze[player_y][player_x + 1] != 1:
+        player_x += 1
+
+# 检查玩家是否到达终点
+def check_win():
+    return player_x == end_x and player_y == end_y
+
+# 主游戏循环
+def main():
+    while True:
+        display_maze()
+        if check_win():
+            print("恭喜你，你赢了！")
+            break
+        direction = input("请输入移动方向（↑↓←→）：")
+        move_player(direction)
+
+# 开始游戏
+if __name__ == "__main__":
+    main()
